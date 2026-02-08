@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Amor Eterno ❤️</title>
+
+<style>
+body {
+  margin: 0;
+  background: radial-gradient(circle, #1a1a2e, #0f0f1a);
+  color: #ffb6c1;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  overflow: hidden;
+}
+
+.container {
+  padding: 25px;
+}
+
+h1 {
+  font-size: 32px;
+  text-shadow: 0 0 10px #ff69b4;
+}
+
+.subtitle {
+  color: #ffc0cb;
+  margin-bottom: 15px;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+}
+
+.love-phrase {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #ffe4ec;
+  font-style: italic;
+  text-shadow: 0 0 8px rgba(255,182,193,0.8);
+  min-height: 40px;
+}
+
+.music-btn {
+  margin-top: 20px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(45deg, #ff69b4, #ffc0cb);
+  color: #1a1a2e;
+  font-size: 17px;
+  cursor: pointer;
+  box-shadow: 0 0 14px pink;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>Dalma Gabriela Solis Urriola 💖</h1>
+  <p class="subtitle">Nuestro amor florece con el tiempo</p>
+
+  <canvas id="canvas" width="500" height="500"></canvas>
+
+  <p class="love-phrase" id="lovePhrase"></p>
+
+  <button class="music-btn" id="musicBtn">▶️ Iniciar Música</button>
+
+  <audio id="music" loop>
+    <source src="say-yes-to-heaven-instrumental.mp3" type="audio/mpeg">
+  </audio>
+</div>
+
+<script>
+/* =================== FRASE =================== */
+const phraseText =
+"No es solo un código… es el tiempo, la música y los momentos que hemos pasado ❤️";
+const phraseElement = document.getElementById("lovePhrase");
+
+function animatePhrase() {
+  phraseElement.innerHTML = "";
+  let i = 0;
+  const typing = setInterval(() => {
+    phraseElement.innerHTML += phraseText.charAt(i);
+    i++;
+    if (i === phraseText.length) clearInterval(typing);
+  }, 70);
+}
+
+/* =================== CANVAS =================== */
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+let hearts = [];
+let pulse = 1;
+
+function Heart(x, y, size, speed) {
+  this.x = x;
+  this.y = y;
+  this.size = size;
+  this.speed = speed;
+}
+
+function drawHeart(x, y, size) {
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.bezierCurveTo(x - size, y - size, x - size * 2, y + size / 2, x, y + size * 2);
+  ctx.bezierCurveTo(x + size * 2, y + size / 2, x + size, y - size, x, y);
+  ctx.fillStyle = "rgba(255,105,180,0.8)";
+  ctx.fill();
+}
+
+function createHearts() {
+  for (let i = 0; i < 3; i++) {
+    hearts.push(new Heart(
+      canvas.width / 2 + (Math.random() * 120 - 60),
+      canvas.height - 40,
+      Math.random() * 10 + 8,
+      Math.random() * 1 + 0.5
+    ));
+  }
+}
+
+function animateCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  hearts.forEach((h, i) => {
+    drawHeart(h.x, h.y, h.size * pulse);
+    h.y -= h.speed;
+    if (h.y < 0) hearts.splice(i, 1);
+  });
+  createHearts();
+  requestAnimationFrame(animateCanvas);
+}
+animateCanvas();
+
+/* =================== MÚSICA + REACCIÓN =================== */
+const music = document.getElementById("music");
+const btn = document.getElementById("musicBtn");
+
+let started = false;
+let volume = 0;
+let audioCtx, analyser, source, dataArray;
+
+btn.addEventListener("click", () => {
+  if (!started) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    source = audioCtx.createMediaElementSource(music);
+
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    analyser.fftSize = 64;
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+    music.volume = 0;
+    music.play();
+
+    fadeInMusic();
+    animatePhrase();
+    reactToMusic();
+
+    btn.innerText = "⏸️ Pausar Música";
+    started = true;
+  } else {
+    if (music.paused) {
+      music.play();
+      btn.innerText = "⏸️ Pausar Música";
+    } else {
+      music.pause();
+      btn.innerText = "▶️ Reanudar Música";
+    }
+  }
+});
+
+function fadeInMusic() {
+  const fade = setInterval(() => {
+    if (volume < 0.2) {
+      volume += 0.01;
+      music.volume = volume;
+    } else {
+      clearInterval(fade);
+    }
+  }, 200);
+}
+
+function reactToMusic() {
+  analyser.getByteFrequencyData(dataArray);
+  const avg = dataArray.reduce((a, b) => a + b) / dataArray.length;
+  pulse = 1 + avg / 300;
+  requestAnimationFrame(reactToMusic);
+}
+</script>
+</body>
+</html>
