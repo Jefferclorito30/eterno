@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Dalma 🤍</title>
+
+<style>
+body{
+    margin:0;
+    padding:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(to bottom, #fdeff9, #ecf0ff);
+    font-family: 'Segoe UI', sans-serif;
+    overflow:hidden;
+}
+
+/* Fondo suave animado */
+body::before{
+    content:"";
+    position:absolute;
+    width:200%;
+    height:200%;
+    background: radial-gradient(circle, #ffffff40 2px, transparent 2px);
+    background-size:40px 40px;
+    animation: moveBg 60s linear infinite;
+}
+
+@keyframes moveBg{
+    from{transform:translate(0,0);}
+    to{transform:translate(-200px,-200px);}
+}
+
+/* Carta */
+.envelope{
+    position:relative;
+    width:300px;
+    height:200px;
+    background:#ffd6e8;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    cursor:pointer;
+    transition:transform 0.6s;
+    z-index:2;
+}
+
+.envelope:active{
+    transform:scale(0.95);
+}
+
+/* Tapa */
+.flap{
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:#ffb6d9;
+    clip-path: polygon(0 0, 50% 50%, 100% 0);
+    transform-origin: top;
+    transition: transform 1s;
+    border-radius:15px 15px 0 0;
+}
+
+/* Carta interna */
+.letter{
+    position:absolute;
+    width:90%;
+    height:90%;
+    background:white;
+    top:5%;
+    left:5%;
+    border-radius:10px;
+    padding:20px;
+    box-sizing:border-box;
+    font-size:14px;
+    color:#555;
+    text-align:center;
+    opacity:0;
+    transition: all 1s;
+    transform:translateY(20px);
+    overflow-y:auto;
+}
+
+h1{
+    position:absolute;
+    top:30px;
+    text-align:center;
+    width:100%;
+    font-size:20px;
+    color:#b583c6;
+    letter-spacing:1px;
+}
+
+/* Abierto */
+.open .flap{
+    transform: rotateX(180deg);
+}
+
+.open .letter{
+    opacity:1;
+    transform:translateY(0);
+}
+</style>
+</head>
+<body>
+
+<h1>Dalma Gabriela Solís Urriola</h1>
+
+<div class="envelope" onclick="openLetter()">
+    <div class="flap"></div>
+    <div class="letter">
+        <p>
+        Fuiste una parte importante de mi vida y guardo con gratitud los momentos que compartimos.
+        Deseo que estés bien, que la vida te sonría y que encuentres felicidad en cada paso que des.
+        <br><br>
+        Feliz San Valentín. 🤍<br>
+        De You Da One - R
+        </p>
+    </div>
+</div>
+
+<audio id="music" src="say-yes-to-heaven-instrumental.mp3" autoplay loop></audio>
+
+<script>
+let opened = false;
+
+function openLetter(){
+    const envelope = document.querySelector('.envelope');
+    const music = document.getElementById("music");
+
+    if(!opened){
+        envelope.classList.add('open');
+        music.play();
+        opened = true;
+    }
+}
+
+/* Intento de autoplay al cargar */
+window.addEventListener("load", ()=>{
+    const music = document.getElementById("music");
+    music.play().catch(()=>{});
+});
+</script>
+
+</body>
+</html>
